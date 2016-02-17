@@ -27,7 +27,7 @@ package org.spongepowered.common.plugin;
 import com.google.common.base.Objects;
 import org.spongepowered.api.plugin.PluginContainer;
 
-public abstract class BasePluginContainer implements PluginContainer, PluginContainerExtension {
+public abstract class BasePluginContainer implements PluginContainer {
 
     protected BasePluginContainer() {
     }
@@ -36,7 +36,7 @@ public abstract class BasePluginContainer implements PluginContainer, PluginCont
         return Objects.toStringHelper("Plugin")
                 .omitNullValues()
                 .add("id", getId())
-                .add("name", getName().orElse(null))
+                .add("name", getName())
                 .add("version", getVersion().orElse(null))
                 .add("description", getDescription().orElse(null))
                 .add("url", getUrl().orElse(null))

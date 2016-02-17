@@ -39,23 +39,18 @@ public final class SpongeApiContainer extends BasePluginContainer {
     }
 
     @Override
-    public Injector getInjector() {
-        return SpongeImpl.getInjector();
-    }
-
-    @Override
     public String getId() {
         return SpongeImpl.API_ID;
     }
 
     @Override
-    public Optional<String> getName() {
-        return Optional.of(SpongeImpl.API_NAME);
+    public String getName() {
+        return SpongeImpl.API_NAME;
     }
 
     @Override
     public Optional<String> getVersion() {
-        return Optional.of(SpongeImpl.API_VERSION);
+        return SpongeImpl.API_VERSION;
     }
 
     @Override

@@ -75,7 +75,7 @@ public class SpongeCommandDisambiguator implements Disambiguator {
                         SpongeImpl.getGame().getServer().getConsole().sendMessage(t("Plugin " + container.get().getName() + " was specified as the "
                                                                                     + "preferred owner for " + aliasUsed + ", but does not have any such command!"));
                     } else if (ownedMatchingCommands.size() > 1) {
-                        throw new IllegalStateException("Plugin " + container.get().getDisplayName() + " seems to have multiple commands registered as "
+                        throw new IllegalStateException("Plugin " + container.get().getName() + " seems to have multiple commands registered as "
                                 + aliasUsed + "! This is a programming error!");
                     } else {
                         return Optional.of(ownedMatchingCommands.get(0));
