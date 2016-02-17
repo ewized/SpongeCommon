@@ -24,48 +24,30 @@
  */
 package org.spongepowered.common.plugin;
 
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
-import org.slf4j.Logger;
-import org.spongepowered.api.Game;
-import org.spongepowered.common.SpongeImpl;
+import com.google.common.base.Objects;
+import org.spongepowered.api.plugin.PluginContainer;
 
-import java.util.Optional;
+public abstract class BasePluginContainer implements PluginContainer, PluginContainerExtension {
 
-@Singleton
-public final class SpongeApiContainer extends BasePluginContainer {
+    protected BasePluginContainer() {
+    }
 
-    SpongeApiContainer() {
+    protected Objects.ToStringHelper toStringHelper() {
+        return Objects.toStringHelper("Plugin")
+                .omitNullValues()
+                .add("id", getId())
+                .add("name", getName().orElse(null))
+                .add("version", getVersion().orElse(null))
+                .add("description", getDescription().orElse(null))
+                .add("url", getUrl().orElse(null))
+                .add("authors", getAuthors().isEmpty() ? null : getAuthors())
+                .add("source", getSource().orElse(null));
     }
 
     @Override
-    public Injector getInjector() {
-        return SpongeImpl.getInjector();
+    public final String toString() {
+        return toStringHelper().toString();
     }
 
-    @Override
-    public String getId() {
-        return SpongeImpl.API_ID;
-    }
-
-    @Override
-    public Optional<String> getName() {
-        return Optional.of(SpongeImpl.API_NAME);
-    }
-
-    @Override
-    public Optional<String> getVersion() {
-        return Optional.of(SpongeImpl.API_VERSION);
-    }
-
-    @Override
-    public Logger getLogger() {
-        return SpongeImpl.getSlf4jLogger();
-    }
-
-    @Override
-    public Optional<Game> getInstance() {
-        return Optional.of(SpongeImpl.getGame());
-    }
 
 }

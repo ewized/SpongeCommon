@@ -57,9 +57,9 @@ public abstract class AbstractPlatform implements Platform {
         this.minecraftVersion = minecraftVersion;
 
         this.platformMap.put("Type", this.getType());
-        this.platformMap.put("ApiName", this.api.getName());
+        this.platformMap.put("ApiName", this.api.getName().get());
         this.platformMap.put("ApiVersion", this.api.getVersion());
-        this.platformMap.put("ImplementationName", this.impl.getName());
+        this.platformMap.put("ImplementationName", this.impl.getName().get());
         this.platformMap.put("ImplementationVersion", this.impl.getVersion());
         this.platformMap.put("MinecraftVersion", this.getMinecraftVersion());
     }

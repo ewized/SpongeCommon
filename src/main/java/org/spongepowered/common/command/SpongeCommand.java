@@ -319,7 +319,8 @@ public class SpongeCommand {
 
     }
 
-    private static final Text IMPLEMENTATION_NAME = Text.of(TextColors.YELLOW, TextStyles.BOLD, Sponge.getPlatform().getImplementation().getName());
+    private static final Text IMPLEMENTATION_NAME = Text.of(TextColors.YELLOW, TextStyles.BOLD,
+            Sponge.getPlatform().getImplementation().getName().get());
 
     private static CommandSpec getVersionCommand() {
         return CommandSpec.builder()
@@ -382,7 +383,7 @@ public class SpongeCommand {
                 .executor((src, args) -> {
                     if (args.hasAny("plugin")) {
                         for (PluginContainer container : args.<PluginContainer>getAll("plugin")) {
-                            Text.Builder build = Text.builder().append(title(container.getName()),
+                            Text.Builder build = Text.builder().append(title(container.getDisplayName()),
                                     Text.of(" v" + container.getVersion()), NEWLINE_TEXT)
                                     .append(Text.of(INDENT, title("ID: "), container.getId(), NEWLINE_TEXT,
                                             INDENT, title("Main class: "), !container.getInstance().isPresent() ? " Virtual mod " :
@@ -400,7 +401,7 @@ public class SpongeCommand {
                                 build.append(SEPARATOR_TEXT);
                             }
                             first = false;
-                            build.append(Text.builder(next.getName())
+                            build.append(Text.builder(next.getDisplayName())
                                     .onClick(TextActions.runCommand("/sponge:sponge plugins " + next.getId()))
                                     .onHover(TextActions.showText(Text.of("Version " + next.getVersion())))
                                     .color(TextColors.GREEN).build());
