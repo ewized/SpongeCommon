@@ -24,7 +24,6 @@
  */
 package org.spongepowered.common.plugin;
 
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -33,7 +32,7 @@ import org.spongepowered.common.SpongeImpl;
 import java.util.Optional;
 
 @Singleton
-public final class SpongeApiContainer extends BasePluginContainer {
+public final class SpongeApiContainer extends AbstractPluginContainer {
 
     SpongeApiContainer() {
     }

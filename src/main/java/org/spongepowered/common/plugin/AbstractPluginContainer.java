@@ -27,9 +27,9 @@ package org.spongepowered.common.plugin;
 import com.google.common.base.Objects;
 import org.spongepowered.api.plugin.PluginContainer;
 
-public abstract class BasePluginContainer implements PluginContainer {
+public abstract class AbstractPluginContainer implements PluginContainer {
 
-    protected BasePluginContainer() {
+    protected AbstractPluginContainer() {
     }
 
     protected Objects.ToStringHelper toStringHelper() {
