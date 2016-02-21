@@ -51,7 +51,6 @@ public class SpongeGameDictionary extends SimpleConfigDictionary {
     }
 
     protected InputStream resolveSource() throws IOException {
-        System.out.println(">>> resolveSource()");
         if (Files.exists(this.path)) {
             return Files.newInputStream(this.path);
         }
