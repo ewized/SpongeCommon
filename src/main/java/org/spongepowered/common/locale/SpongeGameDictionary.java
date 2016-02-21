@@ -22,37 +22,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.common.plugin;
+package org.spongepowered.common.locale;
 
-import com.google.common.base.Objects;
-import com.google.inject.Injector;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.service.ServiceManager;
-import org.spongepowered.api.service.SimpleServiceManager;
+import org.spongepowered.api.locale.SimpleConfigDictionary;
+import org.spongepowered.common.SpongeImpl;
 
-public abstract class SpongePluginContainer implements PluginContainer {
-    private final ServiceManager serviceManager = new SimpleServiceManager();
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-    protected SpongePluginContainer() {
+public class SpongeGameDictionary extends SimpleConfigDictionary {
+
+    public static final String FILE_NAME = "dict.conf";
+
+    private final Path path;
+
+    public SpongeGameDictionary(Object subject) {
+        super(subject, SpongeImpl.getGlobalConfig().getConfig().getGeneral().getLocale());
+        this.path = Paths.get(SpongeImpl.getConfigDir().toString(), FILE_NAME);
+        this.resolver.primary(this::resolveSource);
+        try {
+            load();
+        } catch (IOException e) {
+            SpongeImpl.getLogger().error("Failed to load game dictionary", e);
+        }
     }
 
-    protected Objects.ToStringHelper toStringHelper() {
-        return Objects.toStringHelper("Plugin")
-                .add("id", this.getId())
-                .add("name", this.getName())
-                .add("version", this.getVersion());
+    protected InputStream resolveSource() throws IOException {
+        System.out.println(">>> resolveSource()");
+        if (Files.exists(this.path)) {
+            return Files.newInputStream(this.path);
+        }
+        return this.subject.getClass().getClassLoader().getResourceAsStream(this.path.getFileName().toString());
     }
-
-    @Override
-    public ServiceManager getServiceManager() {
-        return this.serviceManager;
-    }
-
-    @Override
-    public String toString() {
-        return toStringHelper().toString();
-    }
-
-    public abstract Injector getInjector();
-
 }
