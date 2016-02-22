@@ -28,6 +28,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.locale.Dictionary;
 import org.spongepowered.api.service.ban.BanService;
@@ -51,6 +52,8 @@ import org.spongepowered.common.service.user.SpongeUserStorageService;
 import org.spongepowered.common.service.whitelist.SpongeWhitelistService;
 import org.spongepowered.common.text.action.SpongeCallbackHolder;
 
+import java.util.Locale;
+
 /**
  * Used to setup the ecosystem.
  */
@@ -66,8 +69,15 @@ public final class SpongeBootstrap {
         registerService(UserStorageService.class, new SpongeUserStorageService());
         registerService(BanService.class, new SpongeBanService());
         registerService(WhitelistService.class, new SpongeWhitelistService());
-        registerService(Dictionary.class, new SpongeGameDictionary(SpongeImpl.getPlugin()));
-        Sponge.getServer().getConsole().sendMessage(Text.get("test").orElse(Text.of("no value found")).toBuilder().color(TextColors.BLUE).build());
+        SpongeGameDictionary dict;
+        registerService(Dictionary.class, dict = new SpongeGameDictionary(SpongeImpl.getPlugin()));
+
+        // start debug
+        ConsoleSource console = Sponge.getServer().getConsole();
+        console.sendMessage(Text.get("test").get().toBuilder().color(TextColors.BLUE).build());
+        console.sendMessage(Text.get("test", Locale.UK).get().toBuilder().color(TextColors.RED).build());
+        // end debug
+
         SpongeInternalListeners.getInstance().registerServiceCallback(PermissionService.class, input -> SpongeImpl.getGame().getServer().getConsole().getContainingCollection());
     }
 

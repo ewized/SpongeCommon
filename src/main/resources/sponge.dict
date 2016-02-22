@@ -1,3 +1,6 @@
 en_US {
     test="Hello, world!"
 }
+en_GB {
+    test="'Ello world!"
+}
