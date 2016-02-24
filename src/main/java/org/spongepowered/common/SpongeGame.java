@@ -34,14 +34,11 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.GameState;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Server;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.config.ConfigManager;
 import org.spongepowered.api.data.DataManager;
 import org.spongepowered.api.data.property.PropertyRegistry;
 import org.spongepowered.api.event.EventManager;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.locale.Dictionary;
 import org.spongepowered.api.network.ChannelRegistrar;
 import org.spongepowered.api.plugin.PluginManager;
 import org.spongepowered.api.scheduler.Scheduler;
@@ -52,9 +49,10 @@ import org.spongepowered.common.command.SpongeCommandManager;
 import org.spongepowered.common.config.SpongeConfigManager;
 import org.spongepowered.common.data.SpongeDataManager;
 import org.spongepowered.common.data.property.SpongePropertyRegistry;
-import org.spongepowered.common.locale.SpongeGameDictionary;
 import org.spongepowered.common.registry.SpongeGameRegistry;
 import org.spongepowered.common.scheduler.SpongeScheduler;
+
+import java.util.Locale;
 
 import javax.inject.Singleton;
 
@@ -150,6 +148,11 @@ public abstract class SpongeGame implements Game {
     @Override
     public PropertyRegistry getPropertyRegistry() {
         return SpongePropertyRegistry.getInstance();
+    }
+
+    @Override
+    public Locale getLocale() {
+        return SpongeImpl.getGlobalConfig().getConfig().getGeneral().getLocale();
     }
 
     @Override
