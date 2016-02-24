@@ -120,6 +120,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -973,6 +974,11 @@ public abstract class MixinMinecraftServer implements Server, ConsoleSource, IMi
     @Override
     public Optional<ResourcePack> getDefaultResourcePack() {
         return Optional.ofNullable(this.resourcePack);
+    }
+
+    @Override
+    public Locale getLocale() {
+        return SpongeImpl.getGlobalConfig().getConfig().getGeneral().getLocale();
     }
 
     @Inject(method = "setResourcePack(Ljava/lang/String;Ljava/lang/String;)V", at = @At("HEAD") )

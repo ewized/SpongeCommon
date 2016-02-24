@@ -52,8 +52,6 @@ import org.spongepowered.common.data.property.SpongePropertyRegistry;
 import org.spongepowered.common.registry.SpongeGameRegistry;
 import org.spongepowered.common.scheduler.SpongeScheduler;
 
-import java.util.Locale;
-
 import javax.inject.Singleton;
 
 @Singleton
@@ -148,11 +146,6 @@ public abstract class SpongeGame implements Game {
     @Override
     public PropertyRegistry getPropertyRegistry() {
         return SpongePropertyRegistry.getInstance();
-    }
-
-    @Override
-    public Locale getLocale() {
-        return SpongeImpl.getGlobalConfig().getConfig().getGeneral().getLocale();
     }
 
     @Override
