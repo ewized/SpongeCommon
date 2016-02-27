@@ -39,9 +39,9 @@ import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
+import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.world.World;
 
@@ -62,8 +62,8 @@ public final class SpongeImplHooks {
     }
 
     public static ClientConnectionEvent.Join createClientConnectionEventJoin(Cause cause, MessageChannel originalChannel,
-            Optional<MessageChannel> channel, Optional<Text> originalMessage, Player targetEntity) {
-        return SpongeEventFactory.createClientConnectionEventJoin(cause, originalChannel, channel, originalMessage, targetEntity);
+            Optional<MessageChannel> channel, MessageEvent.MessageFormatter formatter, Player targetEntity, boolean messageCancelled) {
+        return SpongeEventFactory.createClientConnectionEventJoin(cause, originalChannel, channel, formatter, targetEntity, messageCancelled);
     }
 
     public static RespawnPlayerEvent createRespawnPlayerEvent(Cause cause, Transform<World> fromTransform, Transform<World> toTransform,
@@ -72,8 +72,8 @@ public final class SpongeImplHooks {
     }
 
     public static ClientConnectionEvent.Disconnect createClientConnectionEventDisconnect(Cause cause, MessageChannel originalChannel,
-            Optional<MessageChannel> channel, Optional<Text> originalMessage, Player targetEntity) {
-        return SpongeEventFactory.createClientConnectionEventDisconnect(cause, originalChannel, channel, originalMessage, targetEntity);
+            Optional<MessageChannel> channel, MessageEvent.MessageFormatter formatter, Player targetEntity, boolean messageCancelled) {
+        return SpongeEventFactory.createClientConnectionEventDisconnect(cause, originalChannel, channel, formatter, targetEntity, messageCancelled);
     }
 
     public static boolean blockHasTileEntity(Block block, IBlockState state) {

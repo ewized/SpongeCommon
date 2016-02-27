@@ -71,6 +71,7 @@ import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
+import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.network.RemoteConnection;
 import org.spongepowered.api.resourcepack.ResourcePack;
@@ -201,8 +202,9 @@ public abstract class MixinServerConfigurationManager {
         Transform<World> fromTransform = player.getTransform().setExtent((World) worldserver);
 
         ClientConnectionEvent.Login loginEvent = SpongeEventFactory.createClientConnectionEventLogin(
-            Cause.of(NamedCause.source(player)), Optional.of(disconnectMessage), fromTransform, fromTransform,
-            (RemoteConnection) netManager, (org.spongepowered.api.profile.GameProfile) gameprofile, player);
+                Cause.of(NamedCause.source(player)), fromTransform, fromTransform, (RemoteConnection) netManager,
+                new MessageEvent.MessageFormatter(disconnectMessage), (org.spongepowered.api.profile.GameProfile) gameprofile, player, false
+        );
 
         if (kickReason != null) {
             loginEvent.setCancelled(true);
@@ -319,8 +321,10 @@ public abstract class MixinServerConfigurationManager {
         // Fire PlayerJoinEvent
         Text originalMessage = SpongeTexts.toText(chatcomponenttranslation);
         MessageChannel originalChannel = player.getMessageChannel();
-        final ClientConnectionEvent.Join event = SpongeImplHooks.createClientConnectionEventJoin(Cause.of(NamedCause.source(player)), originalChannel,
-                Optional.of(originalChannel), Optional.of(originalMessage), player);
+        final ClientConnectionEvent.Join event = SpongeImplHooks.createClientConnectionEventJoin(
+                Cause.of(NamedCause.source(player)), originalChannel, Optional.of(originalChannel),
+                new MessageEvent.MessageFormatter(originalMessage), player, false
+        );
         SpongeImpl.postEvent(event);
         // Send to the channel
         if (!event.isMessageCancelled()) {

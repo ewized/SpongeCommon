@@ -78,6 +78,7 @@ import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
+import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.PopulatorType;
@@ -469,8 +470,9 @@ public final class CauseTracker {
                     Player spongePlayer = (Player) player;
                     MessageChannel originalChannel = spongePlayer.getMessageChannel();
 
-                    DestructEntityEvent event = SpongeEventFactory.createDestructEntityEvent(cause, originalChannel, Optional.of(originalChannel),
-                        Optional.empty(), (Entity) entity);
+                    DestructEntityEvent event = SpongeEventFactory.createDestructEntityEvent(
+                            cause, originalChannel, Optional.of(originalChannel), new MessageEvent.MessageFormatter(), (Entity) entity, true
+                    );
                     SpongeImpl.getGame().getEventManager().post(event);
                     if (!event.isMessageCancelled()) {
                         event.getChannel().ifPresent(channel -> channel.send(entity, event.getMessage()));
