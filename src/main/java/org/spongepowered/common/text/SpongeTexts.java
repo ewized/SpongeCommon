@@ -28,6 +28,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -41,6 +42,27 @@ public final class SpongeTexts {
     public static final char COLOR_CHAR = '\u00A7';
 
     private SpongeTexts() {
+    }
+
+    public static Text[] splitChatMessage(ChatComponentTranslation component) {
+        Text source = null;
+        Text body = null;
+        for (Object arg : component.getFormatArgs()) {
+            if (arg instanceof IChatComponent) {
+                IChatComponent c = (IChatComponent) arg;
+                if (source == null) {
+                    source = SpongeTexts.toText(c);
+                } else {
+                    Text text = SpongeTexts.toText(c);
+                    if (body == null) {
+                        body = text;
+                    } else {
+                        body.concat(SpongeTexts.toText(c));
+                    }
+                }
+            }
+        }
+        return new Text[] {source, body};
     }
 
     public static IChatComponent toComponent(Text text) {
