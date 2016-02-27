@@ -95,10 +95,10 @@ public abstract class MixinNetHandlerLoginServer implements IMixinNetHandlerLogi
     public boolean fireAuthEvent() {
         Optional<Text> disconnectMessage = Optional.of(Text.of("You are not allowed to log in to this server."));
         ClientConnectionEvent.Auth event = SpongeEventFactory.createClientConnectionEventAuth(Cause.of(NamedCause.source(this.loginGameProfile)),
-            disconnectMessage, disconnectMessage, (RemoteConnection) this.networkManager, (GameProfile) this.loginGameProfile);
+            disconnectMessage, (RemoteConnection) this.networkManager, (GameProfile) this.loginGameProfile);
         SpongeImpl.postEvent(event);
         if (event.isCancelled()) {
-            this.disconnectClient(event.getMessage());
+            this.disconnectClient(event.isMessageCancelled() ? Optional.empty() : Optional.of(event.getMessage()));
         }
         return event.isCancelled();
     }

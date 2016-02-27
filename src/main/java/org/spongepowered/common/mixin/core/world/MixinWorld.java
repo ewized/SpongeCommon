@@ -229,10 +229,11 @@ public abstract class MixinWorld implements World, IMixinWorld {
             MessageChannel originalChannel = MessageChannel.TO_NONE;
 
             DestructEntityEvent event = SpongeEventFactory.createDestructEntityEvent(Cause.of(NamedCause.source(this)), originalChannel,
-                    Optional.of(originalChannel), Optional.empty(), Optional.empty(),
-                    (Entity) entityIn);
+                    Optional.of(originalChannel), Optional.empty(), (Entity) entityIn);
             SpongeImpl.getGame().getEventManager().post(event);
-            event.getMessage().ifPresent(text -> event.getChannel().ifPresent(channel -> channel.send(entityIn, text)));
+            if (!event.isMessageCancelled()) {
+                event.getChannel().ifPresent(channel -> channel.send(entityIn, event.getMessage()));
+            }
         }
     }
 

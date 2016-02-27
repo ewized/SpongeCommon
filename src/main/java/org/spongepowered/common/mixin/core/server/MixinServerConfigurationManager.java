@@ -190,18 +190,18 @@ public abstract class MixinServerConfigurationManager {
 
         // Sponge start - fire login event
         @Nullable String kickReason = allowUserToConnect(netManager.getRemoteAddress(), gameprofile);
-        Optional<Text> disconnectMessage;
+        Text disconnectMessage;
         if (kickReason != null) {
-            disconnectMessage = Optional.of(SpongeTexts.fromLegacy(kickReason));
+            disconnectMessage = SpongeTexts.fromLegacy(kickReason);
         } else {
-            disconnectMessage = Optional.of(Text.of("You are not allowed to log in to this server."));
+            disconnectMessage = Text.of("You are not allowed to log in to this server.");
         }
 
         Player player = (Player) playerIn;
         Transform<World> fromTransform = player.getTransform().setExtent((World) worldserver);
 
         ClientConnectionEvent.Login loginEvent = SpongeEventFactory.createClientConnectionEventLogin(
-            Cause.of(NamedCause.source(player)), disconnectMessage, disconnectMessage, fromTransform, fromTransform,
+            Cause.of(NamedCause.source(player)), Optional.of(disconnectMessage), fromTransform, fromTransform,
             (RemoteConnection) netManager, (org.spongepowered.api.profile.GameProfile) gameprofile, player);
 
         if (kickReason != null) {
@@ -210,7 +210,7 @@ public abstract class MixinServerConfigurationManager {
 
         SpongeImpl.postEvent(loginEvent);
         if (loginEvent.isCancelled()) {
-            disconnectClient(netManager, loginEvent.getMessage(), gameprofile);
+            disconnectClient(netManager, loginEvent.isMessageCancelled() ? Optional.empty() : Optional.of(loginEvent.getMessage()), gameprofile);
             return;
         }
 
@@ -317,13 +317,15 @@ public abstract class MixinServerConfigurationManager {
         }
 
         // Fire PlayerJoinEvent
-        Optional<Text> originalMessage = Optional.of(SpongeTexts.toText(chatcomponenttranslation));
+        Text originalMessage = SpongeTexts.toText(chatcomponenttranslation);
         MessageChannel originalChannel = player.getMessageChannel();
         final ClientConnectionEvent.Join event = SpongeImplHooks.createClientConnectionEventJoin(Cause.of(NamedCause.source(player)), originalChannel,
-                Optional.of(originalChannel), originalMessage, originalMessage, player);
+                Optional.of(originalChannel), Optional.of(originalMessage), player);
         SpongeImpl.postEvent(event);
         // Send to the channel
-        event.getMessage().ifPresent(text -> event.getChannel().ifPresent(channel -> channel.send(player, text)));
+        if (!event.isMessageCancelled()) {
+            event.getChannel().ifPresent(channel -> channel.send(player, event.getMessage()));
+        }
         // Sponge end
 
         if (nbttagcompound != null && nbttagcompound.hasKey("Riding", 10)) {

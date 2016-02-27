@@ -348,12 +348,14 @@ public abstract class MixinNetHandlerPlayServer implements PlayerConnection {
             target = "Lnet/minecraft/server/management/ServerConfigurationManager;sendChatMsg(Lnet/minecraft/util/IChatComponent;)V"))
     public void onDisconnectHandler(ServerConfigurationManager this$0, IChatComponent component) {
         final Player player = ((Player) this.playerEntity);
-        final Optional<Text> message = Optional.ofNullable(SpongeTexts.toText(component));
+        final Text message = SpongeTexts.toText(component);
         final MessageChannel originalChannel = player.getMessageChannel();
         final ClientConnectionEvent.Disconnect event = SpongeImplHooks.createClientConnectionEventDisconnect(Cause.of(NamedCause.source(player)),
-                originalChannel, Optional.of(originalChannel), message, message, player);
+                originalChannel, Optional.of(originalChannel), Optional.of(message), player);
         SpongeImpl.postEvent(event);
-        event.getMessage().ifPresent(text -> event.getChannel().ifPresent(channel -> channel.send(player, text)));
+        if (!event.isMessageCancelled()) {
+            event.getChannel().ifPresent(channel -> channel.send(player, event.getMessage()));
+        }
     }
 
     @Inject(method = "handleResourcePackStatus", at = @At("HEAD"))

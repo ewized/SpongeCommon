@@ -61,7 +61,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.chunk.EmptyChunk;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.tileentity.TileEntity;
@@ -85,7 +84,6 @@ import org.spongepowered.api.world.gen.PopulatorType;
 import org.spongepowered.common.SpongeImpl;
 import org.spongepowered.common.SpongeImplHooks;
 import org.spongepowered.common.block.SpongeBlockSnapshot;
-import org.spongepowered.common.block.SpongeBlockSnapshotBuilder;
 import org.spongepowered.common.data.util.NbtDataUtil;
 import org.spongepowered.common.entity.PlayerTracker;
 import org.spongepowered.common.interfaces.IMixinChunk;
@@ -472,9 +470,11 @@ public final class CauseTracker {
                     MessageChannel originalChannel = spongePlayer.getMessageChannel();
 
                     DestructEntityEvent event = SpongeEventFactory.createDestructEntityEvent(cause, originalChannel, Optional.of(originalChannel),
-                        Optional.empty(), Optional.empty(), (Entity) entity);
+                        Optional.empty(), (Entity) entity);
                     SpongeImpl.getGame().getEventManager().post(event);
-                    event.getMessage().ifPresent(text -> event.getChannel().ifPresent(channel -> channel.send(entity, text)));
+                    if (!event.isMessageCancelled()) {
+                        event.getChannel().ifPresent(channel -> channel.send(entity, event.getMessage()));
+                    }
 
                     StaticMixinHelper.lastDestroyedEntityId = entity.getEntityId();
                 }
