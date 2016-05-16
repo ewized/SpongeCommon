@@ -39,12 +39,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import net.minecraft.network.play.client.C15PacketClientSettings;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S05PacketSpawnPosition;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.network.play.server.S29PacketSoundEffect;
+import net.minecraft.network.play.server.S2DPacketOpenWindow;
+import net.minecraft.network.play.server.S2EPacketCloseWindow;
 import net.minecraft.network.play.server.S48PacketResourcePackSend;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
 import net.minecraft.scoreboard.Team;
@@ -157,7 +158,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Shadow public int lastExperience;
     @Shadow private EntityPlayer.EnumChatVisibility chatVisibility = EntityPlayer.EnumChatVisibility.FULL;
     @Shadow private boolean chatColours;
-    @Shadow private int currentWindowId = 0;
+    @Shadow private int currentWindowId;
 
     @Shadow public abstract void setSpectatingEntity(Entity entityToSpectate);
     @Shadow public abstract void sendPlayerAbilities();
@@ -388,9 +389,15 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
         checkArgument(cause.root() instanceof PluginContainer, "Root must be an instance of Plugin Container");
 
         if (this.currentWindow == null) {
-            this.currentWindowId++;
+            S2DPacketOpenWindow packet = new S2DPacketOpenWindow();
+            packet.windowId = this.currentWindowId++;
+            packet.windowTitle = SpongeTexts.toComponent(Text.of(inventory.getName().get(this.getLocale())));
+            packet.slotCount = inventory.capacity();
+            packet.inventoryType = null; //= inventory.getProperty();
+            packet.entityId = this.getEntityId();
+            this.playerNetServerHandler.getNetworkManager().sendPacket(packet);
             this.currentWindow = inventory;
-            // todo send packet and cause
+            // todo cause
         }
     }
 
@@ -401,7 +408,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
         if (this.currentWindow != null) {
             // todo cause
-            C0DPacketCloseWindow packet = new C0DPacketCloseWindow();
+            S2EPacketCloseWindow packet = new S2EPacketCloseWindow();
             packet.windowId = this.currentWindowId;
             this.playerNetServerHandler.sendPacket(packet);
             this.currentWindow = null;
